@@ -5,21 +5,24 @@ import (
 	"testing"
 )
 
-func TestValidateStatus(t *testing.T) {
+func TestDivide(t *testing.T) {
 	type testCase struct {
-		status      string
-		expectedErr string
+		x, y, expected float64
+		expectedErr    string
 	}
 
 	runCases := []testCase{
-		{"", "status cannot be empty"},
-		{"This is a valid status update that is well within the character limit.", ""},
-		{"This status update is way too long. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.", "status exceeds 140 characters"},
+		{10, 0, 0, "no dividing by 0"},
+		{10, 2, 5, ""},
+		{15, 30, 0.5, ""},
+		{6, 3, 2, ""},
 	}
 
 	submitCases := append(runCases, []testCase{
-		{"Another valid status.", ""},
-		{"This status update, while derivative, contains exactly one hundred and forty-one characters, which is over the status update character limit.", "status exceeds 140 characters"},
+		{0, 10, 0, ""},
+		{100, 0, 0, "no dividing by 0"},
+		{-10, -2, 5, ""},
+		{-10, 2, -5, ""},
 	}...)
 
 	testCases := runCases
@@ -28,31 +31,32 @@ func TestValidateStatus(t *testing.T) {
 	}
 
 	skipped := len(submitCases) - len(testCases)
+
 	passCount := 0
 	failCount := 0
 
 	for _, test := range testCases {
-		err := validateStatus(test.status)
+		result, err := divide(test.x, test.y)
 		errString := ""
 		if err != nil {
 			errString = err.Error()
 		}
-		if errString != test.expectedErr {
+		if result != test.expected || errString != test.expectedErr {
 			failCount++
 			t.Errorf(`---------------------------------
-Inputs:     "%v"
-Expecting:  "%v"
-Actual:     "%v"
+Inputs:     (%v, %v)
+Expecting:  (%v, %v)
+Actual:     (%v, %v)
 Fail
-`, test.status, test.expectedErr, errString)
+`, test.x, test.y, test.expected, test.expectedErr, result, errString)
 		} else {
 			passCount++
 			fmt.Printf(`---------------------------------
-Inputs:     "%v"
-Expecting:  "%v"
-Actual:     "%v"
+Inputs:     (%v, %v)
+Expecting:  (%v, %v)
+Actual:     (%v, %v)
 Pass
-`, test.status, test.expectedErr, errString)
+`, test.x, test.y, test.expected, test.expectedErr, result, errString)
 		}
 	}
 

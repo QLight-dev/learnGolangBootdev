@@ -2,11 +2,9 @@ package main
 
 import "errors"
 
-func validateStatus(status string) error {
-	if status == "" {
-		return errors.New("status cannot be empty")
-	} else if len(status) > 140 {
-		return errors.New("status exceeds 140 characters")
+func divide(x, y float64) (float64, error) {
+	if y == 0 {
+		return 0, errors.New("no dividing by 0")
 	}
-	return nil
+	return x / y, nil
 }
